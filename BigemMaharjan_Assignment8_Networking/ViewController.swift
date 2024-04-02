@@ -112,26 +112,20 @@ class ViewController: UIViewController , CLLocationManagerDelegate{
                 
                 //Changing weather wind speed according to location
                 self.wind.text = "\(String(result.wind.speed)) km/h"
-                
-               
-                
-                //Changing weather icon according to location
-                if(result.weather[0].main == "Clouds"){
-                    self.weatherIcon.image = UIImage(named: "cloud")
-                }else if(result.weather[0].main == "Rain"){
-                    self.weatherIcon.image = UIImage(named: "rain")
-                }else if(result.weather[0].main == "Clear"){
-                    self.weatherIcon.image = UIImage(named: "clearsky")
-                }else if(result.weather[0].main == "Snow"){
-                    self.weatherIcon.image = UIImage(named: "snow")
-                }else if(result.weather[0].main == "Sun"){
-                    self.weatherIcon.image = UIImage(named: "sun")
-                }else if(result.weather[0].main == "Thunderstrom"){
-                    self.weatherIcon.image = UIImage(named: "thunderstrom")
-                }else if(result.weather[0].main == "Drizzle"){
-                    self.weatherIcon.image = UIImage(named: "drizzle")
-                }
 
+                //Changing weather icon according to location
+                let getWeatherAPIIcon = "https://openweathermap.org/img/w/\(result.weather[0].icon).png"
+                URLSession.shared.dataTask(with: URL(string: getWeatherAPIIcon)!, completionHandler: {data, response, error in
+                    //Validation
+                    guard let data = data, error == nil else {
+                        print("Seems some error")
+                        return
+                    }
+                    //Using Dispatch
+                    DispatchQueue.main.async {
+                        self.weatherIcon.image = UIImage(data: data)
+                    }
+                }).resume()
             }
         }).resume()
     }
